@@ -1,0 +1,88 @@
+@import url(https://fonts.googleapis.com/css?family=Lato:100,100italic,300,300italic,regular,italic,700,700italic,900,900italic);
+
+:root {
+  --transition: 0.3s;
+  --border-r: 5px;
+  --color: #d8d8d8;
+  --link-color: #ffc100;
+  --border: 2px solid var(--color);
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+
+button {
+  font-size: inherit;
+  color: inherit;
+  background-color: transparent;
+  cursor: pointer;
+  transition: var(--transition);
+}
+
+html {
+  scroll-behavior: smooth;
+  box-sizing: border-box;
+  font-family: Lato, serif;
+  background-image: linear-gradient(112.1deg, rgba(32, 38, 57, 1) 11.4%, rgb(43, 55, 95) 70.2%);
+}
+
+body {
+  height: 100vh;
+  font-size: 18px;
+  color: var(--color);
+}
+
+a {
+  color: var(--link-color);
+  &:active {
+    opacity: 0.5;
+  }
+}
+
+.wrapper {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 0px 20px;
+  display: flex;
+  justify-content: space-between;
+  flex-direction: column;
+  height: 100%;
+  width: 100%;
+}
+
+.main {
+  flex: 1 1 auto;
+  padding: 20px 0px;
+}
+
+.header {
+  padding: 20px 0px;
+  font-weight: 700;
+  font-size: 1.5rem;
+}
+
+.logo-row {
+  display: flex;
+  text-align: center;
+}
+
+.logo-row span {
+  width: 25px;
+  height: 32px;
+}
+
+.border-right {
+  border-right: var(--border);
+}
+
+.border-top {
+  border-top: var(--border);
+}
+
+.footer {
+  padding: 20px 0px;
+  text-align: center;
+}
