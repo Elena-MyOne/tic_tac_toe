@@ -7,9 +7,6 @@ function createPlayer(id, name, mark, wins) {
   };
 }
 
-const playerX = createPlayer(1, 'Player 1', 'X', 0);
-const playerO = createPlayer(2, 'Player 2', 'O', 0);
-
 const gameBoard = (function () {
   const wrapperBody = `
   <header class="header">
@@ -73,16 +70,8 @@ const gameBoard = (function () {
     const form = document.getElementById('form');
     const { player1, player2 } = form.elements;
     if (player1.value && player2.value) {
-      playerX.name = player1.value;
-      playerO.name = player2.value;
+      playersControllers.updatePlayersNames(player1.value, player2.value);
     }
-  }
-
-  function resetPlayers() {
-    playerX.name = 'Player 1';
-    playerX.wins = 0;
-    playerO.name = 'Player 2';
-    playerO.wins = 0;
   }
 
   function renderGameBoard(player1, player2) {
@@ -92,22 +81,24 @@ const gameBoard = (function () {
       .join('');
 
     return `
-      <div class="statistic">
-        <div class="player">
-          <div class="statistic-mark">X</div>
-          <div class="name">${player1.name}</div>
-          <div class="wins">wins: ${player1.wins}</div>
+      <div class="game-screen">
+        <div class="statistic">
+          <div class="player">
+            <div class="statistic-mark">X</div>
+            <div class="name">${player1.name}</div>
+            <div class="wins">wins: ${player1.wins}</div>
+          </div>
+          <div class="player">
+            <div class="statistic-mark">O</div>
+            <div class="name">${player2.name}</div>
+            <div class="wins">wins: ${player2.wins}</div>
+          </div>
         </div>
-        <div class="player">
-          <div class="statistic-mark">O</div>
-          <div class="name">${player2.name}</div>
-          <div class="wins">wins: ${player2.wins}</div>
+        <div class="board" id="board">${gameField}</div>
+        <div class="controls">
+          <button class="btn go-back-btn" id="go-back-btn">Go back</button>
+          <button class="btn" id="restart-btn">Restart</button>
         </div>
-      </div>
-      <div class="board" id="board">${gameField}</div>
-      <div class="controls">
-        <button class="btn go-back-btn" id="go-back-btn">Go back</button>
-        <button class="btn" id="restart-btn">Restart Game</button>
       </div>
       `;
   }
@@ -116,6 +107,9 @@ const gameBoard = (function () {
     event.preventDefault();
     updatePlayersNames();
     const main = document.getElementById('main');
+    const playerX = playersControllers.getPlayerX();
+    const playerO = playersControllers.getPlayerO();
+
     if (main) {
       main.innerHTML = renderGameBoard(playerX, playerO);
       gameControllers.restartGame();
@@ -126,7 +120,40 @@ const gameBoard = (function () {
   return {
     start,
     loadGame,
+  };
+})();
+
+const playersControllers = (function () {
+  const PLAYER_X_DEFAULT_NAME = 'Player 1';
+  const PLAYER_O_DEFAULT_NAME = 'Player 2';
+  const playerX = createPlayer(1, PLAYER_X_DEFAULT_NAME, 'X', 0);
+  const playerO = createPlayer(2, PLAYER_O_DEFAULT_NAME, 'O', 0);
+
+  function resetPlayers() {
+    playerX.name = PLAYER_X_DEFAULT_NAME;
+    playerX.wins = 0;
+    playerO.name = PLAYER_O_DEFAULT_NAME;
+    playerO.wins = 0;
+  }
+
+  function getPlayerX() {
+    return playerX;
+  }
+
+  function getPlayerO() {
+    return playerO;
+  }
+
+  function updatePlayersNames(playerXName, playerOName) {
+    playerX.name = playerXName;
+    playerO.name = playerOName;
+  }
+
+  return {
     resetPlayers,
+    getPlayerX,
+    getPlayerO,
+    updatePlayersNames,
   };
 })();
 
@@ -149,7 +176,7 @@ const gameControllers = (function () {
       goBackBtn.addEventListener(
         'click',
         () => {
-          gameBoard.resetPlayers();
+          playersControllers.resetPlayers();
           gameBoard.start();
         },
         { once: true }

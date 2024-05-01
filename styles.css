@@ -111,7 +111,11 @@ a {
 
 .start-screen form {
   gap: 30px;
-  background-color: rgba(255, 255, 255, 0.05);
+}
+
+.game-screen,
+.start-screen form {
+  background-color: rgba(255, 255, 255, 0.03);
   padding: 40px;
   border-radius: var(--border-r);
   border: var(--border);
@@ -128,6 +132,10 @@ a {
   padding: 5px 10px;
   border-radius: var(--border-r);
   font-size: 0.9em;
+}
+
+.game-screen {
+  text-align: center;
 }
 
 .controls {
@@ -149,12 +157,11 @@ a {
 
 .statistic-mark {
   font-size: 1.5em;
-  opacity: 0.5;
+  opacity: 0.7;
   margin-bottom: 10px;
 }
 
 .name {
-  font-size: 1.4em;
   margin-bottom: 10px;
 }
 
@@ -167,6 +174,8 @@ a {
   align-items: center;
   grid-template-rows: repeat(3, auto);
   grid-template-columns: repeat(3, auto);
+  background-color: #252e4a;
+  border-radius: var(--border-r);
 }
 
 .cell {
