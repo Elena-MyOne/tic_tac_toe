@@ -116,7 +116,7 @@ a {
 .game-screen,
 .start-screen form {
   background-color: rgba(255, 255, 255, 0.03);
-  padding: 40px;
+  padding: 30px;
   border-radius: var(--border-r);
   border: var(--border);
 }
@@ -151,8 +151,8 @@ a {
   justify-content: space-between;
   align-items: center;
   text-align: center;
-  width: 320px;
-  margin-bottom: 50px;
+  width: 310px;
+  margin-bottom: 30px;
 }
 
 .statistic-mark {
@@ -163,6 +163,12 @@ a {
 
 .name {
   margin-bottom: 10px;
+}
+
+.turn {
+  margin-bottom: 30px;
+  color: var(--link-color);
+  opacity: 0.9;
 }
 
 .board {

@@ -76,9 +76,7 @@ const gameBoard = (function () {
 
   function renderGameBoard(player1, player2) {
     const game = new Array(9).fill('');
-    const gameField = game
-      .map((ceil, index) => `<div class="cell" data-cell="${index + 1}">${ceil}</div>`)
-      .join('');
+    const gameField = game.map((ceil, index) => `<div class="cell">${ceil}</div>`).join('');
 
     return `
       <div class="game-screen">
@@ -94,6 +92,7 @@ const gameBoard = (function () {
             <div class="wins">wins: ${player2.wins}</div>
           </div>
         </div>
+        <div class="turn">${player1.name} is playing</div>
         <div class="board" id="board">${gameField}</div>
         <div class="controls">
           <button class="btn go-back-btn" id="go-back-btn">Go back</button>
@@ -112,6 +111,7 @@ const gameBoard = (function () {
 
     if (main) {
       main.innerHTML = renderGameBoard(playerX, playerO);
+      gameControllers.playGame();
       gameControllers.restartGame();
       gameControllers.goBack();
     }
@@ -144,6 +144,12 @@ const playersControllers = (function () {
     return playerO;
   }
 
+  function showPlayerTurnMessage(player) {
+    document.querySelector('.turn').innerHTML = `${
+      player ? playerX.name : playerO.name
+    } is playing`;
+  }
+
   function updatePlayersNames(playerXName, playerOName) {
     playerX.name = playerXName;
     playerO.name = playerOName;
@@ -153,18 +159,99 @@ const playersControllers = (function () {
     resetPlayers,
     getPlayerX,
     getPlayerO,
+    showPlayerTurnMessage,
     updatePlayersNames,
   };
 })();
 
 const gameControllers = (function () {
-  let currentPlayerId = 1;
+  const X_CLASS = 'x';
+  const O_CLASS = 'circle';
+  const WINNING_COMBINATIONS = [
+    [0, 1, 2],
+    [3, 4, 5],
+    [6, 7, 8],
+    [0, 3, 6],
+    [1, 4, 7],
+    [2, 5, 8],
+    [0, 4, 8],
+    [2, 4, 6],
+  ];
+  let isPlayerXTurn = true;
   let gameOver = false;
+
+  function playGame() {
+    const board = document.getElementById('board');
+    board.addEventListener('click', (event) => {
+      const target = event.target;
+
+      if (target.closest('.cell')) {
+        playersControllers.showPlayerTurnMessage(isPlayerXTurn);
+        if (!target.classList.contains(O_CLASS) && isPlayerXTurn) {
+          target.classList.add(X_CLASS);
+          if (checkForWinner()) {
+            declareWinner(playersControllers.getPlayerX());
+          }
+          changeTurn();
+          playersControllers.showPlayerTurnMessage(isPlayerXTurn);
+        } else if (!target.classList.contains(X_CLASS) && !isPlayerXTurn) {
+          target.classList.add(O_CLASS);
+          if (checkForWinner()) {
+            declareWinner(playersControllers.getPlayerO());
+          }
+          changeTurn();
+          playersControllers.showPlayerTurnMessage(isPlayerXTurn);
+        }
+
+        console.log(target);
+      }
+    });
+  }
+
+  function checkForWinner() {
+    const cells = document.querySelectorAll('.cell');
+    const currentClass = isPlayerXTurn ? X_CLASS : O_CLASS;
+
+    return WINNING_COMBINATIONS.some((combination) => {
+      return combination.every((index) => {
+        return cells[index].classList.contains(currentClass);
+      });
+    });
+  }
+
+  function declareWinner(player) {
+    console.log(`${player.name} wins!`);
+    gameOver = true;
+  }
+
+  function declareDraw() {
+    console.log("It's a draw!");
+    gameOver = true;
+  }
+
+  function isDraw(cells) {
+    return [...cells].every(
+      (cell) => cell.classList.contains(X_CLASS) || cell.classList.contains(O_CLASS)
+    );
+  }
+
+  function changeTurn() {
+    isPlayerXTurn = !isPlayerXTurn;
+  }
+
+  function setPlayerXTurn() {
+    isPlayerXTurn = true;
+  }
 
   function restartGame() {
     const restartBtn = document.getElementById('restart-btn');
+    const cells = document.querySelectorAll('.cell');
+
     if (restartBtn) {
       restartBtn.addEventListener('click', () => {
+        cells.forEach((cell) => (cell.className = 'cell'));
+        setPlayerXTurn();
+        playersControllers.showPlayerTurnMessage(isPlayerXTurn);
         console.log('restart');
       });
     }
@@ -191,6 +278,7 @@ const gameControllers = (function () {
   return {
     restartGame,
     goBack,
+    playGame,
   };
 })();
 
