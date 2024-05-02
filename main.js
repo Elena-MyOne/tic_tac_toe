@@ -180,28 +180,34 @@ const gameControllers = (function () {
 
   function playGame() {
     const board = document.getElementById('board');
-    board.addEventListener('click', (event) => {
-      const target = event.target;
+    board.addEventListener('click', handleCellClick);
+  }
 
-      if (target.closest('.cell')) {
-        playersControllers.showPlayerTurnMessage(isPlayerXTurn);
-        if (!target.classList.contains(O_CLASS) && isPlayerXTurn) {
-          target.classList.add(X_CLASS);
-          if (checkForWinner()) {
-            declareWinner(playersControllers.getPlayerX());
-          }
-          changeTurn();
-          playersControllers.showPlayerTurnMessage(isPlayerXTurn);
-        } else if (!target.classList.contains(X_CLASS) && !isPlayerXTurn) {
-          target.classList.add(O_CLASS);
-          if (checkForWinner()) {
-            declareWinner(playersControllers.getPlayerO());
-          }
-          changeTurn();
-          playersControllers.showPlayerTurnMessage(isPlayerXTurn);
-        }
+  function handleCellClick(event) {
+    const target = event.target;
+
+    if (!target.closest('.cell')) return;
+
+    if (target.closest('.cell')) {
+      playersControllers.showPlayerTurnMessage(isPlayerXTurn);
+      if (!target.classList.contains(O_CLASS) && isPlayerXTurn) {
+        target.classList.add(X_CLASS);
+        handleGameOutcome(playersControllers.getPlayerX());
+      } else if (!target.classList.contains(X_CLASS) && !isPlayerXTurn) {
+        target.classList.add(O_CLASS);
+        handleGameOutcome(playersControllers.getPlayerO());
       }
-    });
+    }
+  }
+
+  function handleGameOutcome(player) {
+    if (checkForWinner()) {
+      declareWinner(player);
+    } else if (isDraw()) {
+      declareDraw();
+    }
+    changeTurn();
+    playersControllers.showPlayerTurnMessage(isPlayerXTurn);
   }
 
   function checkForWinner() {
@@ -234,11 +240,17 @@ const gameControllers = (function () {
   }
 
   function declareDraw() {
-    console.log("It's a draw!");
+    const winnerMessage = document.querySelector('.winner-message');
+    winnerMessage.innerHTML = `
+      <span>Oops!</span>
+      <span>It's draw</span>
+    `;
+    showWinnerMessage(winnerMessage);
     gameOver = true;
   }
 
-  function isDraw(cells) {
+  function isDraw() {
+    const cells = document.querySelectorAll('.cell');
     return [...cells].every(
       (cell) => cell.classList.contains(X_CLASS) || cell.classList.contains(O_CLASS)
     );
@@ -279,10 +291,6 @@ const gameControllers = (function () {
         { once: true }
       );
     }
-  }
-
-  function removeEventListeners() {
-    //add removes
   }
 
   return {
