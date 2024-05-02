@@ -1,9 +1,8 @@
-function createPlayer(id, name, mark, wins) {
+function createPlayer(id, name, mark) {
   return {
     id,
     name,
     mark,
-    wins,
   };
 }
 
@@ -76,7 +75,7 @@ const gameBoard = (function () {
 
   function renderGameBoard(player1, player2) {
     const game = new Array(9).fill('');
-    const gameField = game.map((ceil, index) => `<div class="cell">${ceil}</div>`).join('');
+    const gameField = game.map((ceil) => `<div class="cell">${ceil}</div>`).join('');
 
     return `
       <div class="game-screen">
@@ -84,16 +83,17 @@ const gameBoard = (function () {
           <div class="player">
             <div class="statistic-mark">X</div>
             <div class="name">${player1.name}</div>
-            <div class="wins">wins: ${player1.wins}</div>
           </div>
           <div class="player">
             <div class="statistic-mark">O</div>
             <div class="name">${player2.name}</div>
-            <div class="wins">wins: ${player2.wins}</div>
           </div>
         </div>
         <div class="turn">${player1.name} is playing</div>
-        <div class="board" id="board">${gameField}</div>
+        <div class="game-flow">
+          <div class="board" id="board">${gameField}</div>
+          <div class="winner-message"></div>
+        </div>
         <div class="controls">
           <button class="btn go-back-btn" id="go-back-btn">Go back</button>
           <button class="btn" id="restart-btn">Restart</button>
@@ -126,14 +126,12 @@ const gameBoard = (function () {
 const playersControllers = (function () {
   const PLAYER_X_DEFAULT_NAME = 'Player 1';
   const PLAYER_O_DEFAULT_NAME = 'Player 2';
-  const playerX = createPlayer(1, PLAYER_X_DEFAULT_NAME, 'X', 0);
-  const playerO = createPlayer(2, PLAYER_O_DEFAULT_NAME, 'O', 0);
+  const playerX = createPlayer(1, PLAYER_X_DEFAULT_NAME, 'X');
+  const playerO = createPlayer(2, PLAYER_O_DEFAULT_NAME, 'O');
 
   function resetPlayers() {
     playerX.name = PLAYER_X_DEFAULT_NAME;
-    playerX.wins = 0;
     playerO.name = PLAYER_O_DEFAULT_NAME;
-    playerO.wins = 0;
   }
 
   function getPlayerX() {
@@ -202,8 +200,6 @@ const gameControllers = (function () {
           changeTurn();
           playersControllers.showPlayerTurnMessage(isPlayerXTurn);
         }
-
-        console.log(target);
       }
     });
   }
@@ -211,7 +207,6 @@ const gameControllers = (function () {
   function checkForWinner() {
     const cells = document.querySelectorAll('.cell');
     const currentClass = isPlayerXTurn ? X_CLASS : O_CLASS;
-
     return WINNING_COMBINATIONS.some((combination) => {
       return combination.every((index) => {
         return cells[index].classList.contains(currentClass);
@@ -220,8 +215,22 @@ const gameControllers = (function () {
   }
 
   function declareWinner(player) {
-    console.log(`${player.name} wins!`);
+    const winnerMessage = document.querySelector('.winner-message');
+    winnerMessage.innerHTML = `
+      <span>${player.name}</span>
+      <span>Won!</span>
+    `;
+    showWinnerMessage(winnerMessage);
     gameOver = true;
+  }
+
+  function hideWinnerMessage() {
+    const winnerMessage = document.querySelector('.winner-message');
+    winnerMessage.style.display = 'none';
+  }
+
+  function showWinnerMessage(winnerMessage) {
+    winnerMessage.style.display = 'flex';
   }
 
   function declareDraw() {
@@ -252,7 +261,7 @@ const gameControllers = (function () {
         cells.forEach((cell) => (cell.className = 'cell'));
         setPlayerXTurn();
         playersControllers.showPlayerTurnMessage(isPlayerXTurn);
-        console.log('restart');
+        hideWinnerMessage();
       });
     }
   }
@@ -264,6 +273,7 @@ const gameControllers = (function () {
         'click',
         () => {
           playersControllers.resetPlayers();
+          hideWinnerMessage();
           gameBoard.start();
         },
         { once: true }
