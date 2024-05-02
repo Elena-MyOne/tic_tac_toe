@@ -6,6 +6,8 @@ This project is a Tic Tac Toe game that can be played in the browser. The game a
 take turns marking spaces on a 3x3 grid with their respective symbols (X and O). The objective of
 the game is to get three of your symbols in a row, either horizontally, vertically, or diagonally.
 
+![Capture](https://github.com/Elena-MyOne/tic_tac_toe/assets/74279859/a7e7fc1f-81f7-4507-8b15-30ca43cd1f90)
+
 ## Technologies Used
 
 - HTML
